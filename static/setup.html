@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnboardIQ — Company Setup</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header .logo { font-size: 48px; margin-bottom: 16px; }
+        .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .header p { color: #888; font-size: 15px; }
+
+        .card {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 16px;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f0f1a;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus { border-color: #6366f1; }
+
+        .input-group textarea { resize: vertical; min-height: 80px; }
+
+        .color-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .color-option {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .color-option.selected { border-color: #fff; }
+
+        .upload-area {
+            border: 2px dashed #2a2a4a;
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-area:hover { border-color: #6366f1; background: #1e1e3f; }
+        .upload-area .icon { font-size: 32px; margin-bottom: 8px; }
+        .upload-area p { color: #888; font-size: 14px; }
+        .upload-area span { color: #6366f1; }
+
+        .uploaded-files { margin-top: 12px; }
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #1e1e3f;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .uploaded-file .remove {
+            margin-left: auto;
+            cursor: pointer;
+            color: #f87171;
+            font-size: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary { background: #6366f1; color: white; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled { background: #2a2a4a; cursor: not-allowed; }
+
+        .companies-list { margin-bottom: 32px; }
+        .company-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .company-card:hover { border-color: #6366f1; background: #1e1e3f; }
+
+        .company-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .company-info h3 { font-size: 15px; font-weight: 600; color: #fff; }
+        .company-info p { font-size: 13px; color: #888; margin-top: 2px; }
+
+        .company-arrow {
+            margin-left: auto;
+            color: #6366f1;
+            font-size: 18px;
+        }
+
+        .success-msg {
+            display: none;
+            background: #0f1f0f;
+            border: 1px solid #4ade80;
+            border-radius: 8px;
+            padding: 16px;
+            color: #4ade80;
+            font-size: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .steps {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .step {
+            flex: 1;
+            height: 4px;
+            background: #2a2a4a;
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+
+        .step.active { background: #6366f1; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">🚀</div>
+        <h1>OnboardIQ</h1>
+        <p>AI-powered onboarding for any company</p>
+    </div>
+
+    <!-- EXISTING COMPANIES -->
+    <div id="companies-section">
+        <div class="companies-list" id="companies-list">
+            <!-- Loaded by JS -->
+        </div>
+        <button class="btn btn-primary" onclick="showSetupForm()">
+            + Set Up a New Company
+        </button>
+    </div>
+
+    <!-- SETUP FORM -->
+    <div id="setup-form" style="display:none">
+        <div class="steps">
+            <div class="step active" id="step1"></div>
+            <div class="step" id="step2"></div>
+            <div class="step" id="step3"></div>
+        </div>
+
+        <div class="success-msg" id="success-msg"></div>
+
+        <!-- STEP 1 — Company Details -->
+        <div id="form-step1">
+            <div class="card">
+                <h2>🏢 Company Details</h2>
+
+                <div class="input-group">
+                    <label>Company Name</label>
+                    <input type="text" id="company-name"
+                        placeholder="e.g. Acme Corp" />
+                </div>
+
+                <div class="input-group">
+                    <label>One-line Description</label>
+                    <textarea id="company-desc"
+                        placeholder="e.g. B2B SaaS company building project management tools for engineering teams"></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Brand Color</label>
+                    <div class="color-options">
+                        <div class="color-option selected"
+                            style="background:#6366f1"
+                            onclick="selectColor('#6366f1', this)"></div>
+                        <div class="color-option"
+                            style="background:#10b981"
+                            onclick="selectColor('#10b981', this)"></div>
+                        <div class="color-option"
+                            style="background:#f59e0b"
+                            onclick="selectColor('#f59e0b', this)"></div>
+                        <div class="color-option"
+                            style="background:#ef4444"
+                            onclick="selectColor('#ef4444', this)"></div>
+                        <div class="color-option"
+                            style="background:#3b82f6"
+                            onclick="selectColor('#3b82f6', this)"></div>
+                        <div class="color-option"
+                            style="background:#8b5cf6"
+                            onclick="selectColor('#8b5cf6', this)"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="goToStep2()">
+                    Next: Upload Docs →
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2 — Upload Docs -->
+        <div id="form-step2" style="display:none">
+            <div class="card">
+                <h2>📄 Upload Company Docs</h2>
+                <p style="color:#888; font-size:13px; margin-bottom:16px">
+                    Upload your company handbook, processes, org chart,
+                    tech docs — anything a new joiner should know.
+                    Accepts .md and .txt files.
+                </p>
+
+                <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                    <input type="file" id="file-input" multiple
+                        accept=".md,.txt" style="display:none"
+                        onchange="handleFiles(this.files)">
+                    <div class="icon">📁</div>
+                    <p>Click to upload or drag and drop</p>
+                    <p><span>.md and .txt files</span></p>
+                </div>
+
+                <div class="uploaded-files" id="uploaded-files"></div>
+            </div>
+
+            <button class="btn btn-primary" onclick="createCompany()"
+                id="create-btn">
+                Create OnboardIQ Instance →
+            </button>
+        </div>
+
+        <!-- STEP 3 — Done -->
+        <div id="form-step3" style="display:none">
+            <div class="card" style="text-align:center; padding:48px">
+                <div style="font-size:64px; margin-bottom:16px">🎉</div>
+                <h2 style="justify-content:center; font-size:22px; margin-bottom:8px">
+                    Your OnboardIQ is Ready!
+                </h2>
+                <p style="color:#888; margin-bottom:24px" id="success-detail"></p>
+                <a id="go-to-onboard" href="#"
+                    style="display:inline-block; padding:14px 32px;
+                    background:#6366f1; color:white; border-radius:8px;
+                    text-decoration:none; font-weight:600; margin-bottom:12px">
+                    Open OnboardIQ →
+                </a>
+                <br>
+                <button onclick="location.reload()"
+                    style="background:none; border:none; color:#888;
+                    cursor:pointer; font-size:13px; margin-top:8px">
+                    Set up another company
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedColor = '#6366f1';
+    let uploadedFiles = [];
+    let createdCompanyId = null;
+
+    // Load existing companies on page load
+    async function loadCompanies() {
+        const res = await fetch('/companies');
+        const data = await res.json();
+        const list = document.getElementById('companies-list');
+
+        if (data.companies.length === 0) {
+            showSetupForm();
+            return;
+        }
+
+        list.innerHTML = '<p style="color:#888; font-size:13px; margin-bottom:12px">Existing companies:</p>';
+
+        data.companies.forEach(company => {
+            const initial = company.name.charAt(0).toUpperCase();
+            const card = document.createElement('a');
+            card.className = 'company-card';
+            card.href = `/?company=${company.id}`;
+            card.innerHTML = `
+                <div class="company-logo"
+                    style="background:${company.color || '#6366f1'}">
+                    ${initial}
+                </div>
+                <div class="company-info">
+                    <h3>${company.name}</h3>
+                    <p>${company.description || 'Click to open OnboardIQ'}</p>
+                </div>
+                <div class="company-arrow">→</div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function showSetupForm() {
+        document.getElementById('companies-section').style.display = 'none';
+        document.getElementById('setup-form').style.display = 'block';
+    }
+
+    function selectColor(color, el) {
+        selectedColor = color;
+        document.querySelectorAll('.color-option').forEach(o =>
+            o.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function goToStep2() {
+        const name = document.getElementById('company-name').value.trim();
+        if (!name) { alert('Please enter a company name'); return; }
+
+        document.getElementById('form-step1').style.display = 'none';
+        document.getElementById('form-step2').style.display = 'block';
+        document.getElementById('step2').classList.add('active');
+    }
+
+    function handleFiles(files) {
+        Array.from(files).forEach(file => {
+            if (!uploadedFiles.find(f => f.name === file.name)) {
+                uploadedFiles.push(file);
+            }
+        });
+        renderUploadedFiles();
+    }
+
+    function renderUploadedFiles() {
+        const container = document.getElementById('uploaded-files');
+        container.innerHTML = '';
+        uploadedFiles.forEach((file, idx) => {
+            const div = document.createElement('div');
+            div.className = 'uploaded-file';
+            div.innerHTML = `
+                <span>📄</span>
+                <span>${file.name}</span>
+                <span class="remove" onclick="removeFile(${idx})">×</span>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function removeFile(idx) {
+        uploadedFiles.splice(idx, 1);
+        renderUploadedFiles();
+    }
+
+    async function createCompany() {
+        const name = document.getElementById('company-name').value.trim();
+        const desc = document.getElementById('company-desc').value.trim();
+
+        if (!name) { alert('Please enter a company name'); return; }
+
+        const btn = document.getElementById('create-btn');
+        btn.disabled = true;
+        btn.textContent = 'Setting up...';
+
+        try {
+            // Step 1 — Create company
+            const createRes = await fetch('/companies/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name, description: desc, color: selectedColor,
+                    roles: ["Software Engineer", "Data Analyst",
+                            "Business Analyst", "New Employee"]
+                })
+            });
+
+            const createData = await createRes.json();
+            const companyId = createData.company.id;
+            createdCompanyId = companyId;
+
+            // Step 2 — Upload docs
+            for (const file of uploadedFiles) {
+                const formData = new FormData();
+                formData.append('file', file);
+                await fetch(`/companies/${companyId}/upload-doc`, {
+                    method: 'POST',
+                    body: formData
+                });
+            }
+
+            // Step 3 — Show success
+            document.getElementById('form-step2').style.display = 'none';
+            document.getElementById('form-step3').style.display = 'block';
+            document.getElementById('step3').classList.add('active');
+
+            const docsText = uploadedFiles.length > 0
+                ? `${uploadedFiles.length} document(s) uploaded and indexed.`
+                : 'No docs uploaded yet — you can add them later.';
+
+            document.getElementById('success-detail').textContent =
+                `${name} is ready. ${docsText}`;
+
+            document.getElementById('go-to-onboard').href =
+                `/?company=${companyId}`;
+
+        } catch (err) {
+            alert('Something went wrong. Please try again.');
+            btn.disabled = false;
+            btn.textContent = 'Create OnboardIQ Instance →';
+        }
+    }
+
+    loadCompanies();
+</script>
+</body>
+</html>

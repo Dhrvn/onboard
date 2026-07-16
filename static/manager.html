@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnboardIQ — Manager Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: #1a1a2e;
+            border-bottom: 1px solid #2a2a4a;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar .logo { font-size: 24px; }
+        .topbar h1 { font-size: 18px; font-weight: 700; color: #fff; }
+        .topbar p { font-size: 13px; color: #888; margin-top: 2px; }
+        .topbar .badge {
+            margin-left: auto;
+            background: #1e1e3f;
+            border: 1px solid #6366f1;
+            color: #6366f1;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-card .sublabel {
+            font-size: 13px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .stat-card.highlight { border-color: #f59e0b; }
+        .stat-card.highlight .value { color: #f59e0b; }
+
+        .section {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #2a2a4a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #16162a;
+        }
+
+        .section-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .section-header p {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .question-item {
+            padding: 16px 24px;
+            border-bottom: 1px solid #1e1e3f;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            transition: background 0.2s;
+        }
+
+        .question-item:hover { background: #1e1e3f; }
+        .question-item:last-child { border-bottom: none; }
+
+        .question-item .q-icon {
+            width: 32px;
+            height: 32px;
+            background: #2a1a1a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .question-item .q-body { flex: 1; }
+        .question-item .q-text {
+            font-size: 14px;
+            color: #e0e0e0;
+            margin-bottom: 4px;
+        }
+
+        .question-item .q-meta {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .question-item .q-meta span {
+            color: #6366f1;
+            margin-right: 12px;
+        }
+
+        .answer-btn {
+            padding: 6px 14px;
+            background: #1e1e3f;
+            border: 1px solid #6366f1;
+            color: #6366f1;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .answer-btn:hover { background: #6366f1; color: white; }
+
+        .employee-item {
+            padding: 14px 24px;
+            border-bottom: 1px solid #1e1e3f;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .employee-item:last-child { border-bottom: none; }
+
+        .employee-avatar {
+            width: 36px;
+            height: 36px;
+            background: #6366f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .employee-name { font-size: 14px; color: #fff; font-weight: 500; }
+        .employee-meta { font-size: 12px; color: #888; }
+
+        .email-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .email-btn:hover { opacity: 0.9; }
+
+        .empty-state {
+            padding: 48px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .empty-state .icon { font-size: 32px; margin-bottom: 12px; }
+
+        /* ANSWER MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            width: 560px;
+            padding: 32px;
+        }
+
+        .modal h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .modal .question-preview {
+            background: #0f0f1a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 16px;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .modal textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f0f1a;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+            margin-bottom: 16px;
+        }
+
+        .modal textarea:focus { border-color: #6366f1; }
+
+        .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .modal-btn.primary { background: #6366f1; color: white; }
+        .modal-btn.secondary { background: #2a2a4a; color: #ccc; }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1a4a1a;
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+            z-index: 200;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">🤖</div>
+    <div>
+        <h1>OnboardIQ — Manager Dashboard</h1>
+        <p id="company-subtitle">Loading...</p>
+    </div>
+    <div class="badge" id="company-badge">—</div>
+</div>
+
+<div class="container">
+
+    <!-- STATS -->
+    <div class="stats-row">
+        <div class="stat-card highlight">
+            <div class="label">Unanswered Questions</div>
+            <div class="value" id="stat-unanswered">0</div>
+            <div class="sublabel">Need your input</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Active Employees</div>
+            <div class="value" id="stat-employees">0</div>
+            <div class="sublabel">Using OnboardIQ</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Last Updated</div>
+            <div class="value" style="font-size:18px" id="stat-updated">—</div>
+            <div class="sublabel">Dashboard refreshed</div>
+        </div>
+    </div>
+
+    <!-- UNANSWERED QUESTIONS -->
+    <div class="section">
+        <div class="section-header">
+            <div>
+                <h2>⚠️ Unanswered Questions</h2>
+                <p>Questions OnboardIQ couldn't answer — needs your input</p>
+            </div>
+            <button class="email-btn" onclick="sendEmailDigest()">
+                📧 Send Email Digest
+            </button>
+        </div>
+        <div id="questions-list">
+            <div class="empty-state">
+                <div class="icon">✅</div>
+                <p>Loading questions...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIVE EMPLOYEES -->
+    <div class="section">
+        <div class="section-header">
+            <div>
+                <h2>👥 Active Employees</h2>
+                <p>New joiners who have used OnboardIQ</p>
+            </div>
+        </div>
+        <div id="employees-list">
+            <div class="empty-state">
+                <div class="icon">👤</div>
+                <p>Loading employees...</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ANSWER MODAL -->
+<div class="modal-overlay" id="answer-modal">
+    <div class="modal">
+        <h3>✍️ Add Answer to Knowledge Base</h3>
+        <div class="question-preview" id="modal-question"></div>
+        <textarea id="modal-answer"
+            placeholder="Type the answer here. It will be added to the knowledge base so OnboardIQ can answer this question automatically next time..."></textarea>
+        <div class="modal-actions">
+            <button class="modal-btn secondary"
+                onclick="closeModal()">Cancel</button>
+            <button class="modal-btn primary"
+                onclick="submitAnswer()">Save to Knowledge Base</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const companyId = urlParams.get('company') || 'nexus_labs';
+    let currentQuestion = null;
+    let allQuestions = [];
+
+    async function loadDashboard() {
+        const res = await fetch(`/manager-data?company_id=${companyId}`);
+        const data = await res.json();
+
+        // Update header
+        if (data.company) {
+            document.getElementById('company-subtitle').textContent =
+                data.company.name + ' — Manager Dashboard';
+            document.getElementById('company-badge').textContent =
+                data.company.name;
+        }
+
+        // Update stats
+        document.getElementById('stat-unanswered').textContent =
+            data.total_unanswered;
+        document.getElementById('stat-employees').textContent =
+            data.active_employees.length;
+        document.getElementById('stat-updated').textContent =
+            new Date().toLocaleTimeString();
+
+        allQuestions = data.unanswered_questions;
+
+        // Render questions
+        const qList = document.getElementById('questions-list');
+        if (data.unanswered_questions.length === 0) {
+            qList.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">✅</div>
+                    <p>No unanswered questions — OnboardIQ is handling everything!</p>
+                </div>`;
+        } else {
+            qList.innerHTML = '';
+            data.unanswered_questions.forEach((q, idx) => {
+                const div = document.createElement('div');
+                div.className = 'question-item';
+                div.innerHTML = `
+                    <div class="q-icon">❓</div>
+                    <div class="q-body">
+                        <div class="q-text">${q.question}</div>
+                        <div class="q-meta">
+                            <span>${q.employee}</span>
+                            ${q.timestamp}
+                        </div>
+                    </div>
+                    <button class="answer-btn"
+                        onclick="openAnswerModal(${idx})">
+                        + Add Answer
+                    </button>
+                `;
+                qList.appendChild(div);
+            });
+        }
+
+        // Render employees
+        const eList = document.getElementById('employees-list');
+        if (data.active_employees.length === 0) {
+            eList.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">👤</div>
+                    <p>No employees have used OnboardIQ yet</p>
+                </div>`;
+        } else {
+            eList.innerHTML = '';
+            data.active_employees.forEach(name => {
+                const div = document.createElement('div');
+                div.className = 'employee-item';
+                div.innerHTML = `
+                    <div class="employee-avatar">
+                        ${name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <div class="employee-name">${name}</div>
+                        <div class="employee-meta">Active on OnboardIQ</div>
+                    </div>
+                `;
+                eList.appendChild(div);
+            });
+        }
+    }
+
+    function openAnswerModal(idx) {
+        currentQuestion = allQuestions[idx];
+        document.getElementById('modal-question').textContent =
+            currentQuestion.question;
+        document.getElementById('modal-answer').value = '';
+        document.getElementById('answer-modal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('answer-modal').classList.remove('active');
+        currentQuestion = null;
+    }
+
+    async function submitAnswer() {
+        const answer = document.getElementById('modal-answer').value.trim();
+        if (!answer) { alert('Please enter an answer'); return; }
+
+        // Save answer as a new doc in the company knowledge base
+        const content = `# Manager FAQ Addition\n\n**Q: ${currentQuestion.question}**\n\nA: ${answer}\n\n*Added by manager on ${new Date().toLocaleDateString()}*`;
+
+        const file = new File(
+            [content],
+            `manager_faq_${Date.now()}.md`,
+            { type: 'text/plain' }
+        );
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        await fetch(`/companies/${companyId}/upload-doc`, {
+            method: 'POST',
+            body: formData
+        });
+
+        closeModal();
+        showToast('✅ Answer saved to knowledge base!');
+        setTimeout(loadDashboard, 1000);
+    }
+
+    function sendEmailDigest() {
+        // Generate digest text
+        const lines = allQuestions.map((q, i) =>
+            `${i+1}. "${q.question}" — asked by ${q.employee} on ${q.timestamp}`
+        ).join('\n');
+
+        const digest = `OnboardIQ Weekly Digest\n\nUnanswered Questions (${allQuestions.length}):\n\n${lines}\n\nLog in to add answers: ${window.location.origin}/manager?company=${companyId}`;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(digest).then(() => {
+            showToast('📧 Digest copied to clipboard — paste into your email!');
+        });
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    loadDashboard();
+</script>
+</body>
+</html>

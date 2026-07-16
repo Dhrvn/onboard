@@ -1,0 +1,29 @@
+{
+  "nexus_labs": {
+    "id": "nexus_labs",
+    "name": "Nexus Labs",
+    "description": "Fintech startup building real-time credit risk infrastructure",
+    "color": "#6366f1",
+    "roles": [
+      "Software Engineer",
+      "Data Analyst",
+      "Business Analyst"
+    ],
+    "docs_path": "companies/nexus_labs",
+    "created_at": "2026-04-22"
+  },
+  "acme_corp": {
+    "id": "acme_corp",
+    "name": "Acme Corp",
+    "description": "B2B SaaS company building project management tools",
+    "color": "#10b981",
+    "roles": [
+      "Software Engineer",
+      "Data Analyst",
+      "Business Analyst",
+      "New Employee"
+    ],
+    "docs_path": "companies/acme_corp",
+    "created_at": "2026-05-29"
+  }
+}
